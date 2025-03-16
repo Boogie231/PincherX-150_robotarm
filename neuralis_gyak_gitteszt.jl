@@ -1,3 +1,5 @@
+# ez egy teszt a commitoláshoz
+
 using Random
 using Plots
 

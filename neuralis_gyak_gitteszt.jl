@@ -1,3 +1,8 @@
+#=
+A Kezdo gyakorlo file implementacioja a Flux csomaggal
+
+=#
+
 using Flux
 using Flux: params
 
@@ -15,7 +20,7 @@ function generate_data(n_samples, radius, side)
     X = []  # Adatok
     y = []  # Címkék (0 - négyzet, 1 - kör)
 
-    origo = [0, 4]
+    origo = [3, 10]
     for _ in 1:n_samples
         if rand() > 0.5
             x = rand() * side - side / 2 + origo[1]
@@ -82,7 +87,7 @@ end
 
 # Eredmények tesztelése
 predictions = model(x) .> 0.5  # Bináris kimenet
-print(predictions)
+# print(predictions)
 # Pontosság számítása
 accuracy = sum(predictions .== y_data) / length(y_data)
 println("Accuracy: $accuracy")
@@ -94,3 +99,6 @@ model([1, 1])
 model([0, 2])
 model([0, 3])
 model([-1, 3])
+
+
+# másik, komplexebb feladat-ötlet

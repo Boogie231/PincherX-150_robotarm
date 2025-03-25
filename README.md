@@ -17,6 +17,13 @@ Egy reteg eseten: normalizalas, mas transzfer fuggveny, learning rate, optimizac
 ### Kettős ingára
 
 1. Learning rate: vizsgalva
-2. Jön: normalizálás
+2. Activation function: vizsgálva, még le kell írni
+3. Jön: normalizálás
 
 ### 3 csuklós robotkarra
+1. Jön.
+
+
+## Kérdések:
+- ETDK??
+- 

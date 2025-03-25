@@ -4,8 +4,8 @@ This code aims to implement a basic neural network with 1 single hidden layer.
 =#
 
 # Aktivációs függvények
-relu(x) = max.(0, x)
-relu_deriv(x) = x .> 0
+# relu(x) = max.(0, x)
+# relu_deriv(x) = x .> 0
 
 # Neurális hálózat struktúrája
 mutable struct NeuralNetwork
@@ -29,11 +29,11 @@ function initialize_network(input_size, hidden_size, output_size)
 end
 
 # Előrehaladás
-function forward(network::NeuralNetwork, X)
+function forward(network::NeuralNetwork, X; act_func = relu)
     z1 = network.W1 * X' .+ network.b1
-    a1 = relu.(z1)
+    a1 = act_func.(z1)
     z2 = network.W2 * a1 .+ network.b2
-    a2 = relu.(z2)
+    a2 = act_func.(z2)
     z3 = network.W3 * a2 .+ network.b3
     return a1, a2, z3'
 end
@@ -44,7 +44,7 @@ function mean_squared_error(y_pred, y_true)
 end
 
 # Visszaterjesztés és frissítés
-function backpropagate!(network::NeuralNetwork, X, y, learning_rate=0.01)
+function backpropagate!(network::NeuralNetwork, X, y, learning_rate=0.01; act_func_deriv = relu_deriv)
     a1, a2, y_pred = forward(network, X)
     m = size(y, 1)
     
@@ -53,11 +53,11 @@ function backpropagate!(network::NeuralNetwork, X, y, learning_rate=0.01)
     dW3 = dL' * a2'
     db3 = vec(sum(dL, dims=1))
     
-    dz2 = (network.W3' * dL') .* relu_deriv(a2)
+    dz2 = (network.W3' * dL') .* act_func_deriv.(a2)
     dW2 = dz2 * a1'
     db2 = vec(sum(dz2, dims=2))
     
-    dz1 = (network.W2' * dz2) .* relu_deriv(a1)
+    dz1 = (network.W2' * dz2) .* act_func_deriv.(a1)
     dW1 = dz1 * X
     db1 = vec(sum(dz1, dims=2))
     
@@ -70,16 +70,17 @@ function backpropagate!(network::NeuralNetwork, X, y, learning_rate=0.01)
 end
 
 # Háló tanítása
-function train_network!(network::NeuralNetwork, X, y; epochs=1000, learning_rate=0.01)
+function train_network!(network::NeuralNetwork, X, y; epochs=1000, learning_rate=0.01, act_func = relu, act_func_deriv = relu_deriv)
     losses = Float64[]
     for epoch in 1:epochs
-        backpropagate!(network, X, y, learning_rate)
-        if epoch % 10 == 0
-            _, _, y_pred = forward(network, X)
+        backpropagate!(network, X, y, learning_rate; act_func_deriv = act_func_deriv)
+        if epoch % 1 == 0
+            _, _, y_pred = forward(network, X; act_func = act_func)
             loss = mean_squared_error(y_pred, y)
             push!(losses, loss)
             println("Epoch: $epoch, Loss: $loss")
         end
+        println("$(epoch/epochs*100)%")
     end
     return losses
 end

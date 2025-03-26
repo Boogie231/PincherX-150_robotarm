@@ -83,5 +83,3 @@ list_of_lists = [collect(row) for row in eachcol(a[1:193, 1:3])]
 plt2 = PlotLearningRates(list_of_lists,  func_names)
 savefig(plt2, "act_funcs_effect.png")
 
-
-# teszt

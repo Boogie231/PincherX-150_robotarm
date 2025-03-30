@@ -1,5 +1,5 @@
 #=
-This code aims to study the effect of the learning-rate - parameter on the PincherX150's neural network.
+This code aims to study the effect of the learning-rate - parameter on the PincherX150's neural network, for the 5 joint case.
 
 Here it is all about changeing the learning rate.
 =#
@@ -10,16 +10,16 @@ include("..\\NeuralNetworks/activation_functions.jl")
 
 function Study_LearningRate(learning_rates)
     
-    data = Read_In("GenerateData\\datasets\\data_Pincher_3joint.txt"; first_line = true)
-    x = data[:, 1:3] # coordinates
-    y = data[:, 4:6] # joint values    
+    data = Read_In("GenerateData\\datasets\\data_Pincher_5joint1.txt"; first_line = true)
+    x = data[:, 1:6] # coordinates
+    y = data[:, 7:11] # joint values    
 
     result = []
     for rate in learning_rates
 
-        network = initialize_network(3, 64, 3)
+        network = initialize_network(6, 64, 5)
         
-        losses = train_network!(network, x, y, epochs=1500, learning_rate = rate)
+        losses = train_network!(network, x, y, epochs=500, learning_rate = rate)
         push!(result, losses)
     end
     return result;
@@ -40,7 +40,8 @@ begin
     time1 = time()
     # rates = [0.01, 0.1]
     # rates = [0.006, 0.008, 0.01, 0.015, 0.02, 0.025]
-    rates = [0.006, 0.008, 0.01]
+    # rates = [0.005, 0.01, 0.012]
+    rates = [0.01]
 
     losses = Study_LearningRate(rates)    
     plt = PlotLearningRates(losses, rates)

@@ -11,7 +11,7 @@ include("..\\NeuralNetworks/activation_functions.jl")
 function Study_LearningRate(learning_rates)
     
     data = Read_In("GenerateData\\datasets\\data_Pincher_3joint.txt"; first_line = true)
-    x = data[:, 1:3] # coordinates
+    x = data[:, 1:3] ./10 # coordinates
     y = data[:, 4:6] # joint values    
 
     result = []
@@ -19,7 +19,7 @@ function Study_LearningRate(learning_rates)
 
         network = initialize_network(3, 64, 3)
         
-        losses = train_network!(network, x, y, epochs=1500, learning_rate = rate)
+        losses = train_network!(network, x, y, epochs=40, learning_rate = rate)
         push!(result, losses)
     end
     return result;
@@ -40,7 +40,8 @@ begin
     time1 = time()
     # rates = [0.01, 0.1]
     # rates = [0.006, 0.008, 0.01, 0.015, 0.02, 0.025]
-    rates = [0.006, 0.008, 0.01]
+    # rates = [0.006, 0.008, 0.01]
+    rates = [0.1, 0.01, 0.001]
 
     losses = Study_LearningRate(rates)    
     plt = PlotLearningRates(losses, rates)
@@ -55,7 +56,7 @@ begin
 end
 
 losses[1:5]
-plt = PlotLearningRates(losses[[1,2,3,4,]], rates)
+plt = PlotLearningRates(losses[[2,3,4,5]], rates)
 savefig(plt, "losses.pdf")
 
 # data = Read_In("GenerateData\\datasets\\data_Pincher_3joint.txt"; first_line = true)

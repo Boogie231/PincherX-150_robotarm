@@ -22,13 +22,17 @@ Egy reteg eseten: normalizalas, mas transzfer fuggveny, learning rate, optimizac
 
 1. Learning rate: vizsgalva
 2. Activation function: vizsgálva, még le kell írni
-3. Jön: normalizálás
+3. 
 
 ### 3 csuklós robotkarra
-1. Jön.
+Done:
+- learning rate
+- 
 
-
-
+### 5 csuklós robotkarra
+Done:
+- learning rate
+- 
 
 ## Progress:
 

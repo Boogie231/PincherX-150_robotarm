@@ -7,11 +7,12 @@ Here it is all about changeing the learning rate.
 using  Plots
 include("..\\GeneralFunctions\\file_read_write.jl")
 include("..\\NeuralNetworks\\basic_mine.jl")
+include("..\\NeuralNetworks\\activation_functions.jl")
 
 function Study_LearningRate(learning_rates)
     
     data = Read_In("GenerateData\\datasets\\data_DoublePendulum.txt"; first_line = true)
-    x = data[:, 1:2] # coordinates
+    x = data[:, 1:2] .*100 # coordinates
     y = data[:, 3:4] # joint values    
 
     result = []
@@ -19,7 +20,7 @@ function Study_LearningRate(learning_rates)
 
         network = initialize_network(2, 64, 2)
         
-        losses = train_network!(network, x, y, epochs=1000, learning_rate = rate)
+        losses = train_network!(network, x, y, epochs=700, learning_rate = rate)
         push!(result, losses)
     end
     return result;
@@ -40,21 +41,25 @@ end
 begin
     time1 = time()
     # rates = [0.01, 0.1]
-    rates = [0.01, 0.05, 0.08, 0.1, 0.3, 0.5]
+    # rates = [0.01, 0.05, 0.08, 0.1, 0.3, 0.5]
+    rates = [0.01]
 
     losses = Study_LearningRate(rates)    
     plt = PlotLearningRates(losses, rates)
-    savefig(plt, "losses.png")
+    savefig(plt, "losses_withscale.pdf")
 
     elapsed_time = time()-time1;
     println("Elapsed time: $(elapsed_time) sec")
 
-    Print_Matrix2(losses, filename = "losses.txt", header = "learning rate = ($(rates))")
+    Print_Matrix2(losses, filename = "losses_withscale.txt", header = "learning rate = ($(rates))")
 
     plt
 end
 
 losses
+
+plt = PlotLearningRates(losses[[1,2]], rates)
+savefig(plt, "losses_withscale.pdf")
 
 
 

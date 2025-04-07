@@ -82,3 +82,84 @@ function f(q)
 	return Symbolics.value.(position)
 	
 end
+
+# -------------------------		NUMERIKUS INVERZ KINEMATIKA			-----------------
+
+
+# Finding the Jacobi matrix:
+Jacobi = Symbolics.jacobian(general_pos, [q1, q2, q3, q4, q5])
+
+function Jacobi_for_parameters(q)
+	
+	J_eval = substitute(Jacobi, Dict(q1=>q[1], q2=>q[2], q3=>q[3], q4=>q[4], q5=>q[5]))
+
+	θ = Theta_for_parameters(q)
+	if θ == 0
+		error("0 a szög a Jacobinál")
+		J_eval = replace(J_eval, NaN => 0.00)
+	end
+	
+	return Symbolics.value.(J_eval)
+end
+
+
+function Forgatas(q)
+	forg = substitute(rot_Mat, Dict(q1=>q[1], q2=>q[2], q3=>q[3], q4=>q[4], q5=>q[5]))
+	
+	return Symbolics.value.(forg)
+	
+end
+	
+function Numerikus_inverz_kin(x_cel; q = [0.0001, 0., 0., 0, 0], α = 0.008, param = 20000, d_p = 2 ,d_r = 0.04, i_max = 200)
+	# d_p = 2 # tolerancia: mm
+	# d_r = 0.04
+
+	x = f(q) #  direkt kinematikai egyenlettel\
+	# print("x = ",x)
+	
+	
+	dt = 0.0005
+	# α = 0.008
+	
+	ind = 0
+	xs = []
+	qs = []
+	result = -1
+	for i in 1:i_max
+		# print(i,", ")
+		print("|")
+		push!(xs, x)
+		push!(qs, q)
+
+		# print("Δx = ",x-x_cel)
+		err = (x_cel - x)
+		# println(err)
+
+		err_p = err[1:3]
+		err_r = err[4:6]
+		if(norm(err_p) < d_p && norm(err_r) < d_r)
+			print("\ni = ", i)			
+			print("\nConfiguration found!\nErrors: ")
+			println(norm(err_p), " ", norm(err_r))
+			println("Solution: $(qs[end])")
+			result = 0
+			break
+		end
+
+		err[4:6] .*= param
+		dq = α * transpose(Jacobi_for_parameters(q))* err* dt
+		# println("dq = ",dq)
+		# println(x)
+		# println("Jacobi transzp\n")
+		# println((Jacobi_for_parameters(q)'))
+		# break
+		q = q + dq
+		x = f(q)
+		# break
+	end
+	if result == -1
+		println("Reached i limit, i = $(i_max)! Error: $(norm(xs[end]-x_cel))")
+	end
+
+	return qs,xs
+end

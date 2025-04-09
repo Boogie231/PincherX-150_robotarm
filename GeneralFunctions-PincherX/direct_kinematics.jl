@@ -158,8 +158,11 @@ function Numerikus_inverz_kin(x_cel; q = [0.0001, 0., 0., 0, 0], α = 0.008, par
 		# break
 	end
 	if result == -1
-		println("Reached i limit, i = $(i_max)! Error: $(norm(xs[end]-x_cel))")
+		error = xs[end]-x_cel
+		err_p = error[1:3]
+		err_r = error[4:6]
+		println("Reached i limit, i = $(i_max)! Errors: $(norm(err_p)), $(norm(err_r))")
 	end
 
-	return qs,xs
+	return qs,xs, result
 end

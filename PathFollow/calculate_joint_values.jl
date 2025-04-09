@@ -1,3 +1,10 @@
+#=
+This code aims to generate joint values for the robotic arm, with multiple use of 
+inverse kinematics, using an orientation of pointing vertically downward thw whole time.
+
+
+=#
+
 begin
 	using Pkg
 	Pkg.activate()
@@ -19,7 +26,8 @@ include("followpath.jl")
 
 
 begin
-    
+	# measure time
+    time1 = time()
 	
 	# Orientáció meghatározása:
 	a_vec1 = [0, 0, -1]
@@ -28,24 +36,34 @@ begin
 	
 	
 	# Work with data
-	data = Read_In("PathFollow\\coordinates-bogi.txt"; first_line = true)
+	data = Read_In("PathFollow\\inputData\\coordinates3.txt"; first_line = true)
 	
 	# scale data for the robot:
 	norm_scale =  maximum(data[:, 1])
-	xy_scale = 250
-	z_scale = 1
-	data[:, 1] = data[:, 1] ./ norm_scale .*xy_scale
+	xy_scale = 200
+	z_scale = 2
+	x_translation = 80 # archive values: 30 - too low
+	data[:, 1] = data[:, 1] ./ norm_scale .*xy_scale .+ x_translation
 	data[:, 2] = data[:, 2] ./ norm_scale .*xy_scale
 	data[:, 2] = data[:, 2] .- maximum(data[:, 2]) ./2
 	data[:, 2] = -data[:, 2]
 	data[:, 3] = data[:, 3] ./ z_scale
 
+	# save the used data as a pdf
+	file_path = "PathFollow\\results\\test5"
 
-	data_format = [vec(row) for row in eachrow(data)]
+	plt = scatter([data[:, 1]], [data[:, 2]], [data[:, 3]], aspect_ratio = 1, ms = 1)
+	savefig(plt, file_path*"_dataUsed.pdf")
+
+	short_index = 169
+	data_format = [vec(row) for row in eachrow(data[1:short_index, :])]
 	path = Define_goal.(data_format, fill(full_orientation, length(data_format)))
 
-	Follow_path(path; filename = "test1", α = 0.01, param = 20000, d_p = 1 ,d_r = 0.05, i_max = 250)
-
+	Follow_path(path; filename = file_path, α = 0.01, param = 20000, d_p = 1 ,d_r = 0.05, i_max = 250)
+	
+	# measure time
+	elapsed_time = time()-time1;
+    println("Elapsed time: $(elapsed_time) sec ($(elapsed_time/60) min)")
 end
 
 
@@ -53,8 +71,17 @@ end
 
 # plot([data[:, 1]], [data[:, 2]], [data[:, 3]])
 plot([data[:, 1]], [data[:, 2]], [data[:, 3]], aspect_ratio = 1)
+plt = scatter([data[:, 1]], [data[:, 2]], [data[:, 3]], ms = 1,  aspect_ratio = 1)
+savefig(plt, "Date_used.pdf")
+
+plotly()
+gr()
+
+path = Define_goal.(data_format, fill(full_orientation, length(data_format)))
+path[1:3]
 # data[:, 2] = data[:, 2] * 100
 
 # data[:, 1]
 # data[:, 2]
+
 

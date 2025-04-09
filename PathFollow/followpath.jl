@@ -15,22 +15,30 @@ function Follow_path(Big_goal; filename = "Challange", α = 0.01, param = 20000,
 	
 	println("** Rout found! **")
 	
+	unfinished_goals = []
+
 	full_length = length(Big_goal)
 	# Iterálás a Big_goal-on
 	for (index, goal) in enumerate(Big_goal)
 		println("\nIndex: ", index, "/$(full_length)\nGoal: ", goal, "")
 		# println(Big_qs)
-		Big_qs, Big_xs = Numerikus_inverz_kin(goal, q = start_q, α =α, param = param, d_p = d_p ,d_r = d_r, i_max = i_max)  # Kiszámítjuk a qs és xs értékeket
+		Big_qs, Big_xs, res = Numerikus_inverz_kin(goal, q = start_q, α =α, param = param, d_p = d_p ,d_r = d_r, i_max = i_max)  # Kiszámítjuk a qs és xs értékeket
 		start_q = Big_qs[end]
 		append!(Big_big_qs, Big_qs)  # Hozzáfűzzük a Big_qs-t a Big_big_qs-hez
 		append!(Big_big_xs, Big_xs)  # Hozzáfűzzük a Big_xs-t a Big_big_xs-hez
 		# append!(Big_big_qs, [Big_qs[end]])  # Hozzáfűzzük a Big_qs-t a Big_big_qs-hez
 		# append!(Big_big_xs, [Big_xs[end]])  # Hozzáfűzzük a Big_xs-t a Big_big_xs-hez
+
+		if(res == -1)
+			push!(unfinished_goals, goal)
+		end
+			
 	end
 
 	# Kiírás fájlba
 	Print_Matrix2(Big_big_qs; filename = filename*"_qs.txt")
 	Print_Matrix2(Big_big_xs; filename = filename*"_xs.txt")
+	Print_Matrix2(unfinished_goals; filename = filename*"_unfinished_goals.txt")
 
 
 	println("** Program finished finding the q values for the given path! **")

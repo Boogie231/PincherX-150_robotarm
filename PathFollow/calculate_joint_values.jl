@@ -31,32 +31,43 @@ begin
 	
 	# Orientáció meghatározása:
 	a_vec1 = [0, 0, -1]
-	o_vec1 = [0, 1, 0]
+	o_vec1 = [1, 0, 0] # legyen az x tengely, amire ráfog
 	full_orientation,_,_ = Define_goal_orientation(a_vec1, o_vec1)
 	
+	# General data:
+	file_path = "PathFollow\\results\\test6"
+	used_index = 169
 	
 	# Work with data
 	data = Read_In("PathFollow\\inputData\\coordinates3.txt"; first_line = true)
+	data = data[1:used_index, :]
 	
 	# scale data for the robot:
 	norm_scale =  maximum(data[:, 1])
-	xy_scale = 200
+	xy_scale = 169 # kiserleti adat
 	z_scale = 2
-	x_translation = 80 # archive values: 30 - too low
-	data[:, 1] = data[:, 1] ./ norm_scale .*xy_scale .+ x_translation
+	data[:, 1] = data[:, 1] ./ norm_scale .*xy_scale 
 	data[:, 2] = data[:, 2] ./ norm_scale .*xy_scale
-	data[:, 2] = data[:, 2] .- maximum(data[:, 2]) ./2
-	data[:, 2] = -data[:, 2]
 	data[:, 3] = data[:, 3] ./ z_scale
 
-	# save the used data as a pdf
-	file_path = "PathFollow\\results\\test5"
+	
+	x_translation = 10 # mm
+	y_translation = (maximum(data[:, 2]) + minimum(data[:, 2])) /2
+	z_translation = 105 # mm, a pix érdekében
 
-	plt = scatter([data[:, 1]], [data[:, 2]], [data[:, 3]], aspect_ratio = 1, ms = 1)
+	data[:, 1] = data[:, 1] .+ x_translation
+	data[:, 2] = data[:, 2] .- y_translation
+	data[:, 2] = -data[:, 2]
+	data[:, 3] = data[:, 3] .+ z_translation
+
+	
+
+	
+	# save the used data as a pdf
+	plt = scatter([data[:, 1]], [data[:, 2]], [data[:, 3]], aspect_ratio = 1, ms = 1, )
 	savefig(plt, file_path*"_dataUsed.pdf")
 
-	short_index = 169
-	data_format = [vec(row) for row in eachrow(data[1:short_index, :])]
+	data_format = [vec(row) for row in eachrow(data[1:used_index, :])]
 	path = Define_goal.(data_format, fill(full_orientation, length(data_format)))
 
 	Follow_path(path; filename = file_path, α = 0.01, param = 20000, d_p = 1 ,d_r = 0.05, i_max = 250)
@@ -67,21 +78,7 @@ begin
 end
 
 
-# Setting up data scaleing
 
-# plot([data[:, 1]], [data[:, 2]], [data[:, 3]])
-plot([data[:, 1]], [data[:, 2]], [data[:, 3]], aspect_ratio = 1)
-plt = scatter([data[:, 1]], [data[:, 2]], [data[:, 3]], ms = 1,  aspect_ratio = 1)
-savefig(plt, "Date_used.pdf")
 
 plotly()
 gr()
-
-path = Define_goal.(data_format, fill(full_orientation, length(data_format)))
-path[1:3]
-# data[:, 2] = data[:, 2] * 100
-
-# data[:, 1]
-# data[:, 2]
-
-

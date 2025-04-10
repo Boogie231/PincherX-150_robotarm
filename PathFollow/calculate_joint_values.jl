@@ -35,7 +35,7 @@ begin
 	full_orientation,_,_ = Define_goal_orientation(a_vec1, o_vec1)
 	
 	# General data:
-	file_path = "PathFollow\\results\\test6"
+	file_path = "PathFollow\\results\\test12"
 	used_index = 169
 	
 	# Work with data
@@ -45,7 +45,7 @@ begin
 	# scale data for the robot:
 	norm_scale =  maximum(data[:, 1])
 	xy_scale = 169 # kiserleti adat
-	z_scale = 2
+	z_scale = 4
 	data[:, 1] = data[:, 1] ./ norm_scale .*xy_scale 
 	data[:, 2] = data[:, 2] ./ norm_scale .*xy_scale
 	data[:, 3] = data[:, 3] ./ z_scale
@@ -53,14 +53,12 @@ begin
 	
 	x_translation = 10 # mm
 	y_translation = (maximum(data[:, 2]) + minimum(data[:, 2])) /2
-	z_translation = 105 # mm, a pix érdekében
+	z_translation = 1 # mm, 
 
 	data[:, 1] = data[:, 1] .+ x_translation
 	data[:, 2] = data[:, 2] .- y_translation
 	data[:, 2] = -data[:, 2]
 	data[:, 3] = data[:, 3] .+ z_translation
-
-	
 
 	
 	# save the used data as a pdf

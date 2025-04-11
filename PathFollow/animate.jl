@@ -22,13 +22,13 @@ include("..\\GeneralFunctions-PincherX\\visualize_pro.jl")
 begin
 	
 	# Adatok visszaolvasása:
-	path = "PathFollow\\results\\test9"
+	path = "PathFollow\\results\\test14"
 	data_qs = Read_In(path*"_qs.txt"; first_line = true)
 	data_xs = Read_In(path*"_xs.txt"; first_line = true)
 	
 	# Simulate(data_qs,delay = 0.002, i_max = 3020)
-	Simulate(data_qs,delay = 0.002, i_max = 0)
-	println("Done")
+	Simulate(data_qs,delay = 0.502, i_max = 100)
+
 
 end
 

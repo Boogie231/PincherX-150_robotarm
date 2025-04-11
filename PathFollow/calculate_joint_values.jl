@@ -26,6 +26,9 @@ include("followpath.jl")
 
 
 begin
+	file_path = "PathFollow\\results\\test16"
+
+
 	# measure time
     time1 = time()
 	
@@ -35,7 +38,6 @@ begin
 	full_orientation,_,_ = Define_goal_orientation(a_vec1, o_vec1)
 	
 	# General data:
-	file_path = "PathFollow\\results\\test13"
 	used_index = 40
 	
 	# Work with data
@@ -43,17 +45,17 @@ begin
 	data = data[1:used_index, :]
 	
 	# scale data for the robot:
-	norm_scale =  maximum(data[:, 1])
-	xy_scale = 169 # kiserleti adat
+	norm_scale =  minimum(data[:, 1])
+	xy_scale = 110 # kiserleti adat
 	z_scale = 4
 	data[:, 1] = data[:, 1] ./ norm_scale .*xy_scale 
 	data[:, 2] = data[:, 2] ./ norm_scale .*xy_scale
 	data[:, 3] = data[:, 3] ./ z_scale
 
 	
-	x_translation = 11 # mm
+	x_translation = 0 # mm
 	y_translation = (maximum(data[:, 2]) + minimum(data[:, 2])) /2
-	z_translation = 88 # mm, 
+	z_translation = 86 # mm, 
 
 	data[:, 1] = data[:, 1] .+ x_translation
 	data[:, 2] = data[:, 2] .- y_translation
@@ -62,7 +64,8 @@ begin
 
 	
 	# save the used data as a pdf
-	plt = scatter([data[:, 1]], [data[:, 2]], [data[:, 3]], aspect_ratio = 1, ms = 1, )
+	plt = scatter([data[:, 1]], [data[:, 2]], [data[:, 3]], aspect_ratio = 1, ms = 1, xlabel = "x irány (mm)", ylabel = "y irány (mm)", zlabel = "z irány (mm)", 
+	title = "Az inverzkinematikától megkért pontok halmaza", label = "index = $(used_index)\nxy_scale = $(xy_scale)\nz_scale = $(z_scale)\nx_translation = $(x_translation)\nz_translation = $(z_translation)")
 	savefig(plt, file_path*"_dataUsed.pdf")
 
 	data_format = [vec(row) for row in eachrow(data[1:used_index, :])]
@@ -80,3 +83,5 @@ end
 
 plotly()
 gr()
+
+plt

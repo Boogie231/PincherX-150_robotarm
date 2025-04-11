@@ -25,10 +25,10 @@ function Follow_path(Big_goal; filename = "Challange", α = 0.01, param = 20000,
 		# println(Big_qs)
 		Big_qs, Big_xs, res = Numerikus_inverz_kin(goal, q = start_q, α =α, param = param, d_p = d_p ,d_r = d_r, i_max = i_max)  # Kiszámítjuk a qs és xs értékeket
 		start_q = Big_qs[end]
+		# append!(Big_big_qs, Big_qs)  # Hozzáfűzzük a Big_qs-t a Big_big_qs-hez
+		# append!(Big_big_xs, Big_xs)  # Hozzáfűzzük a Big_xs-t a Big_big_xs-hez
 		append!(Big_big_qs, [Big_qs[end]])  # Hozzáfűzzük a Big_qs-t a Big_big_qs-hez
-		append!(Big_big_xs, [Big_qs[end]])  # Hozzáfűzzük a Big_xs-t a Big_big_xs-hez
-		# append!(Big_big_qs, [Big_qs[end]])  # Hozzáfűzzük a Big_qs-t a Big_big_qs-hez
-		# append!(Big_big_xs, [Big_xs[end]])  # Hozzáfűzzük a Big_xs-t a Big_big_xs-hez
+		append!(Big_big_xs, [Big_xs[end]])  # Hozzáfűzzük a Big_xs-t a Big_big_xs-hez
 
 		if(res == -1)
 			push!(unfinished_goals, goal)

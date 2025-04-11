@@ -26,7 +26,7 @@ include("followpath.jl")
 
 
 begin
-	file_path = "PathFollow\\results\\test16"
+	file_path = "PathFollow\\results\\test17"
 
 
 	# measure time
@@ -38,7 +38,7 @@ begin
 	full_orientation,_,_ = Define_goal_orientation(a_vec1, o_vec1)
 	
 	# General data:
-	used_index = 40
+	used_index = 169
 	
 	# Work with data
 	data = Read_In("PathFollow\\inputData\\coordinates3.txt"; first_line = true)
@@ -55,7 +55,7 @@ begin
 	
 	x_translation = 0 # mm
 	y_translation = (maximum(data[:, 2]) + minimum(data[:, 2])) /2
-	z_translation = 86 # mm, 
+	z_translation = 87 # mm, 
 
 	data[:, 1] = data[:, 1] .+ x_translation
 	data[:, 2] = data[:, 2] .- y_translation

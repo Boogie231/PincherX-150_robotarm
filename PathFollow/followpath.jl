@@ -4,14 +4,15 @@ function Follow_path(Big_goal; filename = "Challange", α = 0.01, param = 20000,
 	Big_big_xs = []  # Üres tömb az x-ek tárolására
 
 	println("Finding the first route for the first goal...")
-	Big_qs, Big_xs = Numerikus_inverz_kin(Big_goal[1], α =α, param = param, d_p = d_p ,d_r = d_r, i_max = 300)  # Kiszámítjuk a qs és xs értékeket
+	Big_qs, Big_xs, _ = Numerikus_inverz_kin(Big_goal[1], α =α, param = param, d_p = d_p ,d_r = d_r, i_max = 300)  # Kiszámítjuk a qs és xs értékeket
 	start_q = Big_qs[end]
 	# println(start_q)
 	
 	# start_q = [-2.6262544677431627e-5, 0.6148409411079253, 0.5858182751350163, -1.457518070119294, -1.5698622540925415]
 	# start_q = [0.0003019433768769848, 0.10321577346969718, 0.4179011174464297, 1.032950755757129, -1.5681388332121287]
 	
-	append!(Big_big_qs, Big_qs)  # Hozzáfűzzük a Big_qs-t a Big_big_qs-hez
+	# append!(Big_big_qs, Big_qs)  # Hozzáfűzzük a Big_qs-t a Big_big_qs-hez
+	append!(Big_big_qs, [Big_qs[end]])  # Hozzáfűzzük a Big_qs-t a Big_big_qs-hez
 	
 	println("** Rout found! **")
 	
@@ -24,8 +25,8 @@ function Follow_path(Big_goal; filename = "Challange", α = 0.01, param = 20000,
 		# println(Big_qs)
 		Big_qs, Big_xs, res = Numerikus_inverz_kin(goal, q = start_q, α =α, param = param, d_p = d_p ,d_r = d_r, i_max = i_max)  # Kiszámítjuk a qs és xs értékeket
 		start_q = Big_qs[end]
-		append!(Big_big_qs, Big_qs)  # Hozzáfűzzük a Big_qs-t a Big_big_qs-hez
-		append!(Big_big_xs, Big_xs)  # Hozzáfűzzük a Big_xs-t a Big_big_xs-hez
+		append!(Big_big_qs, [Big_qs[end]])  # Hozzáfűzzük a Big_qs-t a Big_big_qs-hez
+		append!(Big_big_xs, [Big_qs[end]])  # Hozzáfűzzük a Big_xs-t a Big_big_xs-hez
 		# append!(Big_big_qs, [Big_qs[end]])  # Hozzáfűzzük a Big_qs-t a Big_big_qs-hez
 		# append!(Big_big_xs, [Big_xs[end]])  # Hozzáfűzzük a Big_xs-t a Big_big_xs-hez
 

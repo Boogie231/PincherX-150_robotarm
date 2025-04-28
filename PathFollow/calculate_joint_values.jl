@@ -26,7 +26,7 @@ include("followpath.jl")
 
 
 begin
-	file_path = "PathFollow\\results\\test17"
+	file_path = "PathFollow\\results\\test18"
 
 
 	# measure time
@@ -38,16 +38,16 @@ begin
 	full_orientation,_,_ = Define_goal_orientation(a_vec1, o_vec1)
 	
 	# General data:
-	used_index = 169
+	used_index = 87
 	
 	# Work with data
-	data = Read_In("PathFollow\\inputData\\coordinates3.txt"; first_line = true)
+	data = Read_In("PathFollow\\inputData\\coordinates4.txt"; first_line = true)
 	data = data[1:used_index, :]
 	
 	# scale data for the robot:
 	norm_scale =  minimum(data[:, 1])
-	xy_scale = 110 # kiserleti adat
-	z_scale = 4
+	xy_scale = 110 
+	z_scale = 3
 	data[:, 1] = data[:, 1] ./ norm_scale .*xy_scale 
 	data[:, 2] = data[:, 2] ./ norm_scale .*xy_scale
 	data[:, 3] = data[:, 3] ./ z_scale

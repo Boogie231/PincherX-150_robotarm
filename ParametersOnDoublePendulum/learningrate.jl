@@ -26,12 +26,19 @@ function Study_LearningRate(learning_rates)
     return result;
 end
 
-function PlotLearningRates(losses, learning_rates)
+function PlotLearningRates(losses, learning_rates; plt = plot())
 
-    plt = plot(title = "The effect of learning rates")
+    # plot!(plt, title = "The effect of learning rates")
+    plot!(plt, title = "A tanulási paraméter hatása a tanulási folyamatra")
+
     for (i, loss) in enumerate(losses)
-        plot!(plt, loss, label="learning rate = $(learning_rates[i])", xlabel="Epochs", ylabel="Loss")
-        println("Hejj")
+
+        # index = collect(1:length(loss)) * 10  # olyan esetekhez, ha az 
+        # plot!(plt,index, loss, label="tanulási paraméter = $(learning_rates[i])", xlabel="Tanulási ciklusok", ylabel="Hiba [Rad]")
+        
+        # plot!(plt, loss, label="learning rate = $(learning_rates[i])", xlabel="Epochs", ylabel="Loss")    # angolul
+        plot!(plt,index, loss, label="tanulási paraméter = $(learning_rates[i])", xlabel="Tanulási ciklusok", ylabel="Hiba [Rad]")
+        println("Done plot: in PlotLearningRates...")
     end
 
     return plt
@@ -60,6 +67,21 @@ losses
 
 plt = PlotLearningRates(losses[[1,2]], rates)
 savefig(plt, "losses_withscale.pdf")
+
+
+# kis beolvasas es adatfeldolgozas, ETDK-hoz
+begin
+    
+    x  = Read_In("ParametersOnDoublePendulum/results/losses.txt"; first_line = true)
+    rates = [0.01, 0.05, 0.08, 0.1, 0.3, 0.5]
+    plt = PlotLearningRates([x[1,:]], rates)
+    for i in 1:6
+        plt = PlotLearningRates([x[i, :]], rates[i]; plt = plt)  # Csak az i-edik sort használja
+        # Itt lehetőség van a plotok mentésére vagy megjelenítésére
+    end
+    
+    savefig(plt, "losses_ETDK.pdf")
+end
 
 
 

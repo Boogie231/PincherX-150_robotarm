@@ -84,3 +84,16 @@ function train_network!(network::NeuralNetwork, X, y; epochs=1000, learning_rate
     end
     return losses
 end
+
+using Serialization
+function save_network(network::NeuralNetwork, filename::String)
+    open(filename, "w") do io
+        serialize(io, network)
+    end
+end
+
+function load_network(filename::String)::NeuralNetwork
+    open(filename, "r") do io
+        return deserialize(io)
+    end
+end

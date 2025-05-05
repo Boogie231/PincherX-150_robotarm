@@ -31,15 +31,26 @@ scatter(x_teach[1:ind, 1], x_teach[1:ind, 2],
  xlims=(-4, 4), ylims=(-3, 3), 
 framestyle=:origin, aspect_ratio=:equal, 
  )     
-# Initialize and train the network
 
+# Initialize and train the network
 begin
+    time1 = time()
+
     # network = initialize_network(2, 64, 2)
-    losses = train_network!(network, x_teach, y_teach, epochs=100, learning_rate = 0.2)
-    save_network(network, "TestPendulum_Neural/results/trained_network.jls")
+    losses = train_network!(network, x_teach, y_teach, epochs=1500, learning_rate = 0.15)
+    save_network(network, "TestPendulum_Neural/results/trained_network_6500.jls")
     # network = load_network("TestPendulum_Neural/results/trained_network_1200.jls")
     
+    plt_loss = plotLosses(losses)
+
+    # measure time
+	elapsed_time = time()-time1;
+    println("Elapsed time: $(elapsed_time) sec ($(elapsed_time/60) min)")
 end
+
+network = load_network("TestPendulum_Neural/results/trained_network_1000.jls")
+# save_network(network, "TestPendulum_Neural/results/trained_network_vegyes1.jls")
+
 
 function plot_Circle(radius, plt)
     t = 0:0.01:2π  
@@ -52,7 +63,7 @@ function plot_Circle(radius, plt)
 
 end
 
-# Format the data in range of x(0, 0.8), y(-0.5, 0.5)!!
+# Set up the goal data:
 begin
     # General data:
 	# used_index = 87
@@ -111,16 +122,34 @@ begin
     plt_result = plot(direct_x, direct_y,
     xlims=(-4, 4), ylims=(-2, 2), 
     framestyle=:origin, aspect_ratio=:equal, 
-    label = "Eredményezett útvonal", 
+    label = "Eredményezett útvonal, hiba: $(round(losses[end], digits = 4))", 
     legend=:bottomright,
     title = "Neurális háló eredménye\n(koordinátatérben)")
     plt_result = plot_Circle(2, plt_result)
-    savefig(plt_result, "TestPendulum_Neural/results/result_path.pdf")
+    savefig(plt_result, "TestPendulum_Neural/results/result_path_"*string(round(losses[end], digits = 4))*".pdf")
     
     
 end
 
+function plotLosses(losses)
+    println("Last loss: $(losses[end])")
+    println("Min loss: $(minimum(losses))")
+    plt = plot(losses,
+    xlabel = "Tanulási ciklusok (vegyes)", ylabel = "Hiba [rad]",
+    title = "Hiba a tanulás során",
+    label = "hiba"
+    )
+    return plt
+end
+
+plt_loss = plotLosses(losses)
+
+minimum(losses)
+losses[end]
+rad2deg(losses[end])
+losses[end]
+round(losses[end], digits = 3)
 
 
 
-
+# meg kellene próbálni és normalizált adatokkal tanítani...

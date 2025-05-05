@@ -15,7 +15,7 @@ function generate_data(n_samples, L1, L2)
     Y = zeros(n_samples, 2)
     
     for i in 1:n_samples
-        theta1 = rand() * π
+        theta1 = rand() * 2π
         theta2 = rand() * π
         x = L1 * cos(theta1) + L2 * cos(theta1 + theta2)
         y_val = L1 * sin(theta1) + L2 * sin(theta1 + theta2)
@@ -26,17 +26,19 @@ function generate_data(n_samples, L1, L2)
     return X, Y
 end
 
-
-time1 = time()
-println("Generating $(n_samples) data...")
-x,y = generate_data(n_samples, l1, l2)
-
-println("Saving data...")
-Print_Matrix(hcat(x, y); filename = "GenerateData\\datasets\\data_DoublePendulum.txt", header = "x, y, theta1, theta2")
-
-println("Generating $(n_samples) data --> Completed")
-elapsed_time = time()-time1;
-println("Elapsed time: $(elapsed_time) sec")
+begin
+    
+    time1 = time()
+    println("Generating $(n_samples) data...")
+    x,y = generate_data(n_samples, l1, l2)
+    
+    println("Saving data...")
+    Print_Matrix(hcat(x, y); filename = "GenerateData\\datasets\\data_DoublePendulum.txt", header = "x, y, theta1, theta2")
+    
+    println("Generating $(n_samples) data --> Completed")
+    elapsed_time = time()-time1;
+    println("Elapsed time: $(elapsed_time) sec")
+end
 
 
 #=

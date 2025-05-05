@@ -74,7 +74,7 @@ function train_network!(network::NeuralNetwork, X, y; epochs=1000, learning_rate
     losses = Float64[]
     for epoch in 1:epochs
         backpropagate!(network, X, y, learning_rate; act_func_deriv = act_func_deriv)
-        if epoch % 1 == 0
+        if epoch % 50 == 0
             _, _, y_pred = forward(network, X; act_func = act_func)
             loss = mean_squared_error(y_pred, y)
             push!(losses, loss)

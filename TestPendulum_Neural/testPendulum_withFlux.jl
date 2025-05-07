@@ -121,6 +121,7 @@ losses[end]
 
 # Save the trained model
 serialize("TestPendulum_Neural/results/Flux/trained_network_Flux" * string(round(losses[end], digits = 5)) * ".jls", model)
+# model = deserialize("trained_network_Flux.jls")
 # loaded_model = deserialize("trained_network_Flux.jls")
 
 

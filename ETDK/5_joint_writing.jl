@@ -1,3 +1,7 @@
+#=
+Szimulciót célozza.
+=#
+
 begin
 
 	using Pkg
@@ -30,13 +34,15 @@ begin
 	
 	# Adatok visszaolvasása:
 	path = "FerdeSik\\results\\test3"
+	# path = "PathFollow\\results\\test1"
+    
 	data_qs = Read_In(path*"_qs.txt"; first_line = true)
 	data_xs = Read_In(path*"_xs.txt"; first_line = true)
 
 end
 
 
-
+# Eredeti animáció: sima 3D
 begin
     GLMakie.activate!() 
     # 3D ábra készítése
@@ -59,7 +65,7 @@ begin
     zs = Observable(Float32[])
 
     # Vonallal való kirajzolás
-    lineplot = scatter!(ax3d, xs, ys, zs; color = :red, linewidth = 2, label = "valós nyomvonal")
+    # lineplot = scatter!(ax3d, xs, ys, zs; color = :red, linewidth = 2, label = "valós nyomvonal")
 
     area_size = 250
     # Koordináta tengelyek ábrázolása
@@ -72,8 +78,8 @@ begin
     # ylims!(ax3d, (-100, 100)) 
     # zlims!(ax3d, (0, 100)) 
 
-    axislegend(ax3d, labelsize = 22)
-    cam_pos = Vec3(5, 5, 5)  # Position of the camera
+    # axislegend(ax3d, labelsize = 22)
+    cam_pos = Vec3(5, 0, 0)  # Position of the camera
     cam_lookat = Vec3(0, 0, 0)  # Point the camera is looking at
     cam_up = Vec3(0, 1, 0)  # Up direction
     
@@ -85,7 +91,8 @@ begin
     println("Done Makie...")
 
     # Animáció futtatása
-    for i in 1:length(data_xs[:, 1])
+    # for i in 1:length(data_xs[:, 1])
+    for i in 1:2
         println(data_qs[i, :])
         Teszt(data_qs[i, :])
 
@@ -138,4 +145,102 @@ begin
     end
 
     fig
+end
+
+
+function rodrigues_rotation_matrix(rotvec)
+    θ = norm(rotvec)
+    if θ ≈ 0
+        return I(3)
+    end
+    k = rotvec / θ
+    K = [
+        0.0 -k[3]  k[2];
+        k[3]  0.0 -k[1];
+       -k[2] k[1]  0.0
+    ]
+    R = I(3) + sin(θ)*K + (1 - cos(θ))*(K*K)
+    return R
+end
+
+begin
+    GLMakie.activate!()
+
+    fig = Figure(resolution = (800, 900), padding = 40)
+    ax3d = Axis3(fig[1, 1];
+        title = "Efektor pályája (3D)",
+        xlabel = "X [mm]", ylabel = "Y [mm]", zlabel = "Z [mm]  ",
+        titlesize = 38,
+        xlabelsize = 30,
+        ylabelsize = 30,
+        zlabelsize = 30,
+        xticklabelsize = 20,
+        yticklabelsize = 20,
+        zticklabelsize = 20,
+        xticks = -200:50:200,
+        yticks = -200:50:200,
+        zticks = -200:50:200
+    )
+
+    xs = Observable(Float32[])
+    ys = Observable(Float32[])
+    zs = Observable(Float32[])
+
+    scatter!(ax3d, xs, ys, zs; color = :red, markersize = 10)
+
+    area_size = 250
+    lines!(ax3d, [0, area_size], [0, 0], [0, 0], color = :red, linewidth = 2) # X
+    lines!(ax3d, [0, 0], [0, area_size], [0, 0], color = :green, linewidth = 2) # Y
+    lines!(ax3d, [0, 0], [0, 0], [0, area_size], color = :blue, linewidth = 2) # Z
+    # lines!(ax3d, [-area_size, area_size], [0, 0], [0, 0], color = :red, linewidth = 2) # X
+    # lines!(ax3d, [0, 0], [-area_size, area_size], [0, 0], color = :green, linewidth = 2) # Y
+    # lines!(ax3d, [0, 0], [0, 0], [-area_size, area_size], color = :blue, linewidth = 2) # Z
+
+    xlims!(ax3d, (-area_size, area_size)) 
+    ylims!(ax3d, (-area_size, area_size)) 
+    zlims!(ax3d, (-area_size, area_size)) 
+    
+
+    # Orientation triad observables
+    triad_x = Observable(Vector{Point3f}())
+    triad_y = Observable(Vector{Point3f}())
+    triad_z = Observable(Vector{Point3f}())
+
+    triad_len = 60.0
+
+    triad_x_plot = lines!(ax3d, triad_x, color = :red, linewidth = 4)
+    triad_y_plot = lines!(ax3d, triad_y, color = :green, linewidth = 4)
+    triad_z_plot = lines!(ax3d, triad_z, color = :blue, linewidth = 4)
+
+    autolimits!(ax3d)
+    display(fig)
+    sleep(1)
+
+    println("Animáció kezdete...")
+
+    for i in 1:size(data_xs, 1)
+        p = data_xs[i, 1:3]
+        θv = data_xs[i, 4:6]
+
+        # Update trajectory
+        push!(xs[], p[1])
+        push!(ys[], p[2])
+        push!(zs[], p[3])
+
+        notify(xs); notify(ys); notify(zs)
+
+        # Update triad using Rodrigues
+        R = rodrigues_rotation_matrix(θv)
+
+        origin = Point3f(p...)
+        triad_x[] = [origin, origin + Point3f(R[:, 1] * triad_len)]
+        triad_y[] = [origin, origin + Point3f(R[:, 2] * triad_len)]
+        triad_z[] = [origin, origin + Point3f(R[:, 3] * triad_len)]
+
+        notify(triad_x); notify(triad_y); notify(triad_z)
+
+        sleep(1.5)  # Adjust as needed
+    end
+
+    println("Animáció vége.")
 end
